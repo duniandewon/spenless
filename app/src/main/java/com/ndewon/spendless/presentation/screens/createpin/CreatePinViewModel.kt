@@ -18,4 +18,8 @@ class CreatePinViewModel : ViewModel() {
             _pin.value += pin
         }
     }
+
+    fun resetPin() {
+        _pin.value = ""
+    }
 }

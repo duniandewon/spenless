@@ -35,6 +35,7 @@ fun CreatePinScreen(
 
     LaunchedEffect(pin.length) {
         if (pin.length == 5) {
+            viewModel.resetPin()
             onPinComplete(pin)
         }
     }
