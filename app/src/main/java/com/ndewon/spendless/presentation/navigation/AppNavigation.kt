@@ -1,5 +1,6 @@
 package com.ndewon.spendless.presentation.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.ndewon.spendless.presentation.screens.createusername.CreateUserNameScreen
 import com.ndewon.spendless.presentation.screens.createpin.CreatePinScreen
+import com.ndewon.spendless.presentation.screens.repeatpin.RepeatPinScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,7 +24,7 @@ data class CreatePinScreen(val username: String)
 data class RepeatPinScreen(val username: String, val pin: String)
 
 @Serializable
-data class SetPreferencesScreen(val username: String, val pin: String)
+object SetPreferencesScreen
 
 
 @Composable
@@ -60,12 +62,13 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
 
         composable<RepeatPinScreen> {
             val repeatPinScreen = it.toRoute<RepeatPinScreen>()
-
-            Column {
-                Text(text = "username: ${repeatPinScreen.username}")
-                Text(text = "pin: ${repeatPinScreen.pin}")
-            }
+            RepeatPinScreen(
+                createdPin = repeatPinScreen.pin,
+                onBackClick = { navController.popBackStack() },
+                onPinComplete = { pin ->
+                    Log.d("RepeatPinScreen", "Chosen PIN: $pin")
+                }
+            )
         }
     }
-
 }
