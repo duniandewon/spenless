@@ -21,8 +21,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ndewon.spendless.presentation.components.AppHeader
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateUserNameScreen(
@@ -38,7 +39,16 @@ fun CreateUserNameScreen(
     onCreateUsername: (String) -> Unit,
     onNavigateToLogin: () -> Unit
 ) {
-    val username = remember { mutableStateOf("") }
+    val viewModel: CreateUserNameViewModel = koinViewModel()
+
+    val username = viewModel.username.collectAsState().value
+    val userCreated = viewModel.userCreated.collectAsState().value
+
+    LaunchedEffect(userCreated) {
+        if (userCreated) {
+            onCreateUsername(username)
+        }
+    }
 
     Scaffold(modifier = modifier.fillMaxSize()) { paddingValues ->
         Surface(
@@ -59,7 +69,7 @@ fun CreateUserNameScreen(
                 TextField(
                     modifier = modifier
                         .fillMaxWidth(),
-                    value = username.value,
+                    value = username,
                     placeholder = {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -73,7 +83,7 @@ fun CreateUserNameScreen(
                             )
                         )
                     },
-                    onValueChange = { username.value = it },
+                    onValueChange = { viewModel.setUsername(it) },
                     shape = RoundedCornerShape(16.dp),
                     textStyle = TextStyle(
                         textAlign = TextAlign.Center,
@@ -92,8 +102,8 @@ fun CreateUserNameScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
-                    onClick = { onCreateUsername(username.value) },
-                    enabled = username.value.isNotEmpty(),
+                    onClick = { viewModel.createUser() },
+                    enabled = username.isNotEmpty(),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -109,7 +119,7 @@ fun CreateUserNameScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "Next",
-                            tint = if (username.value.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
+                            tint = if (username.isNotEmpty()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
                                 alpha = 0.12f
                             )
                         )
