@@ -1,6 +1,5 @@
 package com.ndewon.spendless.presentation.screens.createusername
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndewon.spendless.domain.repository.UserRepository
@@ -15,6 +14,9 @@ class CreateUserNameViewModel(private val userRepository: UserRepository) : View
     private val _userCreated = MutableStateFlow(false)
     val userCreated: StateFlow<Boolean> = _userCreated
 
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String> = _errorMessage
+
     fun setUsername(username: String) {
         _username.value = username
     }
@@ -24,8 +26,9 @@ class CreateUserNameViewModel(private val userRepository: UserRepository) : View
             try {
                 userRepository.createUser(_username.value)
                 _userCreated.value = true
+                _errorMessage.value = ""
             } catch (e: Exception) {
-                Log.d("CreateUserNameViewModel", "createUser: ${e.message ?: "Unknown error"}")
+                _errorMessage.value = e.message ?: "Unknown error"
             }
         }
     }
