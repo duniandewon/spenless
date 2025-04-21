@@ -22,7 +22,7 @@ fun PinDots(pinLength: Int, maxLength: Int = 5) {
         repeat(maxLength) { index ->
             Box(
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(10.dp)
                     .clip(CircleShape)
                     .background(
                         if (index < pinLength) MaterialTheme.colorScheme.primary

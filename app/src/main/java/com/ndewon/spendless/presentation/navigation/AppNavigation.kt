@@ -1,8 +1,5 @@
 package com.ndewon.spendless.presentation.navigation
 
-import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -63,10 +60,11 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
         composable<RepeatPinScreen> {
             val repeatPinScreen = it.toRoute<RepeatPinScreen>()
             RepeatPinScreen(
+                username = repeatPinScreen.username,
                 createdPin = repeatPinScreen.pin,
                 onBackClick = { navController.popBackStack() },
-                onPinComplete = { pin ->
-                    Log.d("RepeatPinScreen", "Chosen PIN: $pin")
+                onPinComplete = {
+                    navController.navigate(SetPreferencesScreen)
                 }
             )
         }
