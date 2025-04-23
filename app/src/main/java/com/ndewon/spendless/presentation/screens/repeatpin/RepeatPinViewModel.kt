@@ -2,7 +2,9 @@ package com.ndewon.spendless.presentation.screens.repeatpin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndewon.spendless.domain.errors.Result
 import com.ndewon.spendless.domain.repository.UserRepository
+import com.ndewon.spendless.utils.toMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,19 +48,15 @@ class RepeatPinViewModel(private val userRepository: UserRepository) : ViewModel
         return currentState.pin != createdPin
     }
 
+    fun createPin(username: String, pin: String) = viewModelScope.launch {
+        when (val result = userRepository.createPin(username, pin)) {
+            is Result.Success -> onEvent(RepeatPinUiEvent.CreateUser)
+            is Result.Error -> updateState { it.copy(errorMessage = result.error.toMessage()) }
+        }
+    }
+
     fun updateState(update: (RepeatPinUiState.RepeatPin) -> RepeatPinUiState.RepeatPin) {
         _uiState.value =
             (_uiState.value as? RepeatPinUiState.RepeatPin)?.let(update) ?: _uiState.value
-    }
-
-    fun createPin(username: String, pin: String) = viewModelScope.launch {
-        try {
-            userRepository.createPin(username, pin)
-            onEvent(RepeatPinUiEvent.CreateUser)
-        } catch (e: Exception) {
-            updateState {
-                it.copy(errorMessage = e.message ?: "Unknown error")
-            }
-        }
     }
 }

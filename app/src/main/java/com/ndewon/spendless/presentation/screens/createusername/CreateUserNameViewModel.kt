@@ -2,7 +2,9 @@ package com.ndewon.spendless.presentation.screens.createusername
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ndewon.spendless.domain.errors.Result
 import com.ndewon.spendless.domain.repository.UserRepository
+import com.ndewon.spendless.utils.toMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,12 +25,15 @@ class CreateUserNameViewModel(private val userRepository: UserRepository) : View
 
     fun createUser() {
         viewModelScope.launch {
-            try {
-                userRepository.createUser(_username.value)
-                _userCreated.value = true
-                _errorMessage.value = ""
-            } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Unknown error"
+            when (val res = userRepository.createUser(_username.value)) {
+                is Result.Success -> {
+                    _userCreated.value = true
+                    _errorMessage.value = ""
+                }
+
+                is Result.Error -> {
+                    _errorMessage.value = res.error.toMessage()
+                }
             }
         }
     }
