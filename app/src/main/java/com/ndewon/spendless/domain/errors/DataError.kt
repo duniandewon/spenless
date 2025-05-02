@@ -13,6 +13,7 @@ interface DataError : Error {
     enum class LocalError : DataError {
         USER_ALREADY_EXISTS,
         USER_NOT_FOUND,
+        PREFERENCE_NOT_FOUND,
         UNKNOWN,
     }
 }

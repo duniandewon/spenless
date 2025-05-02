@@ -11,9 +11,11 @@ fun provideDataBase(application: Application): AppDatabase = Room.databaseBuilde
     "spend_less_db"
 ).build()
 
-fun provideDAO(database: AppDatabase) = database.userDao()
+fun provideUserDAO(database: AppDatabase) = database.userDao()
+fun providePreferenceDAO(database: AppDatabase) = database.preferenceDao()
 
 val appDataModule = module {
     single { provideDataBase(get()) }
-    single { provideDAO(get()) }
+    single { provideUserDAO(get()) }
+    single { providePreferenceDAO(get()) }
 }
