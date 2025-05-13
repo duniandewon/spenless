@@ -17,16 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ndewon.spendless.domain.models.ExpenseFormat
 
 @Composable
 fun <T> SegmentedButton(
     options: List<T>,
     selectedOption: T,
     onFormatSelected: (T) -> Unit,
-    label: String
+    label: (T) -> String
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -61,7 +59,7 @@ fun <T> SegmentedButton(
                             Color.Black
                         else
                             MaterialTheme.colorScheme.primary,
-                        text = label,
+                        text = label(format),
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -69,22 +67,4 @@ fun <T> SegmentedButton(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ExpenseFormatTogglePreview() {
-    val options = ExpenseFormat.entries.toList()
-    val selectedOption = ExpenseFormat.NEGATIVE_SIGN
-
-    SegmentedButton(
-        options = options,
-        selectedOption = selectedOption,
-        onFormatSelected = {},
-        label = when (selectedOption) {
-            ExpenseFormat.NEGATIVE_SIGN -> "-$10"
-            ExpenseFormat.PARENTHESES -> "($10)"
-        }
-    )
-
 }

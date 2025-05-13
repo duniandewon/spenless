@@ -5,5 +5,5 @@ data class Preference(
     val currency: String,
     val expenseFormat: ExpenseFormat, // -$10 or ($10)
     val decimalSeparator: DecimalSeparator, // '.' or ','
-    val thousandSeparator: DecimalSeparator // "1.000", "1,000", or "1 000"
+    val thousandSeparator: ThousandsSeparator // "1.000", "1,000", or "1 000"
 )

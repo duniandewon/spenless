@@ -4,6 +4,7 @@ import com.ndewon.spendless.data.local.entity.PreferenceEntity
 import com.ndewon.spendless.domain.models.DecimalSeparator
 import com.ndewon.spendless.domain.models.ExpenseFormat
 import com.ndewon.spendless.domain.models.Preference
+import com.ndewon.spendless.domain.models.ThousandsSeparator
 
 class PreferenceDataMapper {
     fun preferenceDomainToEntity(preference: Preference): PreferenceEntity = PreferenceEntity(
@@ -19,6 +20,6 @@ class PreferenceDataMapper {
         preferenceEntity.currency,
         ExpenseFormat.valueOf(preferenceEntity.expenseFormat),
         DecimalSeparator.valueOf(preferenceEntity.decimalSeparator),
-        DecimalSeparator.valueOf(preferenceEntity.thousandSeparator)
+        ThousandsSeparator.valueOf(preferenceEntity.thousandSeparator)
     )
 }

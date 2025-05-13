@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.ndewon.spendless.presentation.screens.createusername.CreateUserNameScreen
 import com.ndewon.spendless.presentation.screens.createpin.CreatePinScreen
+import com.ndewon.spendless.presentation.screens.preferences.PreferencesScreen
 import com.ndewon.spendless.presentation.screens.repeatpin.RepeatPinScreen
 import kotlinx.serialization.Serializable
 
@@ -29,7 +30,7 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = CreateUsernameScreen
+        startDestination = SetPreferencesScreen
     ) {
         composable<CreateUsernameScreen> {
             CreateUserNameScreen(
@@ -66,6 +67,13 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
                 onPinComplete = {
                     navController.navigate(SetPreferencesScreen)
                 }
+            )
+        }
+
+        composable<SetPreferencesScreen> {
+            PreferencesScreen(
+                onBackClick = { navController.popBackStack() },
+                onPreferencesSaved = {}
             )
         }
     }
