@@ -49,7 +49,7 @@ class RepeatPinViewModel(private val userRepository: UserRepository) : ViewModel
     }
 
     fun createPin(username: String, pin: String) = viewModelScope.launch {
-        when (val result = userRepository.createPin(username, pin)) {
+        when (val result = userRepository.createUser(username, pin)) {
             is Result.Success -> onEvent(RepeatPinUiEvent.CreateUser)
             is Result.Error -> updateState { it.copy(errorMessage = result.error.toMessage()) }
         }

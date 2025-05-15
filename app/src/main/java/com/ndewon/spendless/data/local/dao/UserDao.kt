@@ -15,7 +15,7 @@ interface UserDao {
     suspend fun getUserByUsername(username: String): UserEntity?
 
     @Query("UPDATE users SET pin = :pinHash WHERE username = :username")
-    suspend fun updatePin(username: String, pinHash: String)
+    suspend fun updatePin(username: String, pinHash: String): Int
 
     @Query("SELECT * FROM users WHERE id = :id")
     suspend fun getUserById(id: Long): UserEntity?

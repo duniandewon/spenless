@@ -30,7 +30,7 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = SetPreferencesScreen
+        startDestination = CreateUsernameScreen
     ) {
         composable<CreateUsernameScreen> {
             CreateUserNameScreen(

@@ -9,39 +9,17 @@ import com.ndewon.spendless.domain.repository.UserRepository
 
 class UserRegistrationUseCase(private val userDao: UserDao, val mapper: UserDataMapper) :
     UserRepository {
-    override suspend fun createUser(username: String): Result<User, DataError> {
-        return when (val existingUserResult = getUser(username)) {
+    override suspend fun createUser(username: String, pin: String): Result<User, DataError> {
+        return when (getUserByUsername(username)) {
             is Result.Success -> {
-                if (existingUserResult.data != null) {
-                    return Result.Error(DataError.LocalError.USER_ALREADY_EXISTS)
-                }
-
-                val id = userDao.insertUser(mapper.userDomainToEntity(User(0, username)))
-                val insertedUser = userDao.getUserById(id)
-                    ?: return Result.Error(DataError.LocalError.UNKNOWN)
-
-                Result.Success(mapper.userEntityToDomain(insertedUser))
+                Result.Error(DataError.LocalError.USER_ALREADY_EXISTS)
             }
 
-            is Result.Error -> existingUserResult
-            else -> {
-                Result.Error(DataError.LocalError.UNKNOWN)
+            is Result.Error -> {
+                val id = userDao.insertUser(mapper.userDomainToEntity(User(0, username, pin)))
+
+                Result.Success(User(id, username, pin))
             }
-        }
-    }
-
-    override suspend fun createPin(username: String, pin: String): Result<Boolean, DataError> {
-        return when (val userResult = getUser(username)) {
-            is Result.Success -> {
-                if (userResult.data == null) {
-                    return Result.Error(DataError.LocalError.USER_NOT_FOUND)
-                }
-
-                userDao.updatePin(username, pin)
-                Result.Success(true)
-            }
-
-            is Result.Error -> userResult
 
             else -> {
                 Result.Error(DataError.LocalError.UNKNOWN)
@@ -49,17 +27,17 @@ class UserRegistrationUseCase(private val userDao: UserDao, val mapper: UserData
         }
     }
 
-    override suspend fun getUser(username: String): Result<User?, DataError> {
-        return when (val user = userDao.getUserByUsername(username)) {
-            null -> Result.Error(DataError.LocalError.USER_NOT_FOUND)
-            else -> {
-                Result.Success(user.let { mapper.userEntityToDomain(user) })
-            }
+    override suspend fun getUserByUsername(username: String): Result<User?, DataError> {
+        val user = userDao.getUserByUsername(username)
+        return if (user == null) {
+            Result.Error(DataError.LocalError.USER_NOT_FOUND)
+        } else {
+            Result.Success(mapper.userEntityToDomain(user))
         }
     }
 
     override suspend fun removeUser(username: String): Result<Boolean, DataError> {
-        return when (val userResult = getUser(username)) {
+        return when (val userResult = getUserByUsername(username)) {
             is Result.Success -> {
                 val user = userResult.data
                     ?: return Result.Error(DataError.LocalError.USER_NOT_FOUND)

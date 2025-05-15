@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ndewon.spendless.domain.errors.Result
 import com.ndewon.spendless.domain.repository.UserRepository
-import com.ndewon.spendless.utils.toMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,20 +20,19 @@ class CreateUserNameViewModel(private val userRepository: UserRepository) : View
 
     fun setUsername(username: String) {
         _username.value = username
+        _errorMessage.value = ""
     }
 
     fun createUser() {
         viewModelScope.launch {
-            when (val res = userRepository.createUser(_username.value)) {
-                is Result.Success -> {
-                    _userCreated.value = true
-                    _errorMessage.value = ""
-                }
-
-                is Result.Error -> {
-                    _errorMessage.value = res.error.toMessage()
-                }
+            val res = userRepository.getUserByUsername(_username.value)
+            if (res is Result.Success) {
+                _errorMessage.value = "This username has already been taken!"
+                return@launch;
             }
+
+            _userCreated.value = true
+            _errorMessage.value = ""
         }
     }
 }
