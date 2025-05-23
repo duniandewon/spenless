@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.ndewon.spendless.presentation.screens.createusername.CreateUserNameScreen
 import com.ndewon.spendless.presentation.screens.createpin.CreatePinScreen
+import com.ndewon.spendless.presentation.screens.dashboard.DashboardScreen
 import com.ndewon.spendless.presentation.screens.preferences.PreferencesScreen
 import com.ndewon.spendless.presentation.screens.repeatpin.RepeatPinScreen
 import kotlinx.serialization.Serializable
@@ -24,13 +25,16 @@ data class RepeatPinScreen(val username: String, val pin: String)
 @Serializable
 object SetPreferencesScreen
 
+@Serializable
+object DashboardScreen
+
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostController) {
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = CreateUsernameScreen
+        startDestination = DashboardScreen
     ) {
         composable<CreateUsernameScreen> {
             CreateUserNameScreen(
@@ -72,9 +76,27 @@ fun AppNavigation(modifier: Modifier = Modifier, navController: NavHostControlle
 
         composable<SetPreferencesScreen> {
             PreferencesScreen(
-                onBackClick = { navController.popBackStack() },
-                onPreferencesSaved = {}
+                onBackClick = {
+                    val currentBackStackEntry = navController.previousBackStackEntry
+                    val repeatPinScreen = currentBackStackEntry?.arguments?.let {
+                        navController.getBackStackEntry(currentBackStackEntry.destination.route!!)
+                            .toRoute<RepeatPinScreen>()
+                    }
+
+                    repeatPinScreen?.username?.let { username ->
+                        navController.navigate(CreatePinScreen(username = username))
+                    }
+                },
+                onPreferencesSaved = {
+                    navController.navigate(DashboardScreen) {
+                        popUpTo(CreateUsernameScreen) { inclusive = true }
+                    }
+                }
             )
+        }
+
+        composable<DashboardScreen> {
+            DashboardScreen()
         }
     }
 }

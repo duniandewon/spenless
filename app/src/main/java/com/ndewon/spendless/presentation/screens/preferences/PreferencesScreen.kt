@@ -33,7 +33,6 @@ import com.ndewon.spendless.presentation.components.PreferenceDisplay
 import com.ndewon.spendless.presentation.components.SegmentedButton
 import com.ndewon.spendless.utils.formatNumber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesScreen(
     onBackClick: () -> Unit,

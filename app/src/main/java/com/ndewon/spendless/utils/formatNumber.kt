@@ -8,7 +8,7 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 fun formatNumber(
-    number: Number,
+    number: Double,
     thousandsSeparator: ThousandsSeparator,
     decimalSeparator: DecimalSeparator,
     format: ExpenseFormat,
